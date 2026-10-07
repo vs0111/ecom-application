@@ -3,15 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { fetchOrderById } from '../../../services/api';
-import { CheckCircle, ShoppingBag, Truck, MapPin, Calendar, Phone, Mail, ArrowRight, Printer } from 'lucide-react';
+import { CheckCircle, ShoppingBag, MapPin, Phone, Mail, ArrowRight, Printer } from 'lucide-react';
 
 export default function OrderConfirmationPage({ params }) {
-  const { id } = params;
+  const id = params?.id;
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
     fetchOrderById(id).then((res) => {
       if (res.success && res.data) {
         setOrder(res.data);
@@ -34,13 +38,13 @@ export default function OrderConfirmationPage({ params }) {
   if (error || !order) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">Order Not Found</h2>
-        <p className="text-xs text-slate-500">{error}</p>
+        <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">Order Summary</h2>
+        <p className="text-xs text-slate-500">{error || 'Please check your order ID or place an order.'}</p>
         <Link
-          href="/"
+          href="/shop"
           className="inline-flex items-center gap-2 px-6 py-2.5 bg-sky-600 text-white font-bold text-xs rounded-xl shadow"
         >
-          Return Home
+          Return to Shop
         </Link>
       </div>
     );
@@ -93,41 +97,45 @@ export default function OrderConfirmationPage({ params }) {
         </div>
 
         {/* Customer & Address Details */}
-        <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-sky-600" /> Shipping & Customer Details
-          </h3>
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-            <p className="font-bold text-sm text-slate-900 dark:text-slate-100">{customerDetails.name}</p>
-            <p>{customerDetails.address}, {customerDetails.city}, {customerDetails.state} - {customerDetails.pincode}</p>
-            <div className="flex flex-wrap gap-4 pt-1 text-slate-500 font-medium">
-              <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-sky-600" /> {customerDetails.phone}</span>
-              <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-sky-600" /> {customerDetails.email}</span>
+        {customerDetails && (
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-sky-600" /> Shipping & Customer Details
+            </h3>
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
+              <p className="font-bold text-sm text-slate-900 dark:text-slate-100">{customerDetails.name}</p>
+              <p>{customerDetails.address}, {customerDetails.city}, {customerDetails.state} - {customerDetails.pincode}</p>
+              <div className="flex flex-wrap gap-4 pt-1 text-slate-500 font-medium">
+                <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-sky-600" /> {customerDetails.phone}</span>
+                <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-sky-600" /> {customerDetails.email}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Ordered Items Table */}
-        <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-            <ShoppingBag className="w-4 h-4 text-sky-600" /> Items Ordered ({products.length})
-          </h3>
-          <div className="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
-            {products.map((item, idx) => (
-              <div key={idx} className="p-4 flex items-center gap-4 bg-white dark:bg-slate-900">
-                <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-xl bg-slate-100" />
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 line-clamp-1">{item.name}</h4>
-                  {item.variation && <span className="text-[10px] text-slate-400">Var: {item.variation}</span>}
-                  <p className="text-[11px] text-slate-500 mt-0.5">Quantity: {item.quantity} × ₹{(item.discountPrice || item.price).toLocaleString()}</p>
+        {products && products.length > 0 && (
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-sky-600" /> Items Ordered ({products.length})
+            </h3>
+            <div className="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
+              {products.map((item, idx) => (
+                <div key={idx} className="p-4 flex items-center gap-4 bg-white dark:bg-slate-900">
+                  <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-xl bg-slate-100" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 line-clamp-1">{item.name}</h4>
+                    {item.variation && <span className="text-[10px] text-slate-400">Var: {item.variation}</span>}
+                    <p className="text-[11px] text-slate-500 mt-0.5">Quantity: {item.quantity} × ₹{(item.discountPrice || item.price).toLocaleString()}</p>
+                  </div>
+                  <div className="text-xs font-black text-slate-900 dark:text-slate-100">
+                    ₹{((item.discountPrice || item.price) * item.quantity).toLocaleString()}
+                  </div>
                 </div>
-                <div className="text-xs font-black text-slate-900 dark:text-slate-100">
-                  ₹{((item.discountPrice || item.price) * item.quantity).toLocaleString()}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Footer CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
