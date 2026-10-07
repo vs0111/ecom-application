@@ -293,9 +293,6 @@ export default function CheckoutPage() {
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
-                REQUIRED BY TASK
-              </span>
             </div>
           </div>
         </div>
