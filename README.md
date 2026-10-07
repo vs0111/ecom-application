@@ -101,10 +101,18 @@ PORT=5000
 MONGODB_URI=mongodb+srv://vishnusuresh683_db_user:yWcYpQCfr008Ws9F@cluster0.ecgmhow.mongodb.net/ecom_db?retryWrites=true&w=majority
 ```
 
-### Frontend (`frontend/.env.local`):
+### Frontend (`frontend/.env.local` & `frontend/.env.production`):
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=https://ecom-application-1-l82j.onrender.com/api
 ```
+
+---
+
+## 🌐 Live Hosted Deployment
+
+* **Backend API URL (Render)**: [https://ecom-application-1-l82j.onrender.com/api](https://ecom-application-1-l82j.onrender.com/api)
+* **API Health Check**: [https://ecom-application-1-l82j.onrender.com/api/health](https://ecom-application-1-l82j.onrender.com/api/health)
+* **GitHub Repository**: [https://github.com/vs0111/ecom-application.git](https://github.com/vs0111/ecom-application.git)
 
 ---
 
